@@ -70,3 +70,26 @@ function onPlaceChanged (){
     }
 
 }
+
+$(document).ready(function(){
+    $(".add_to_cart").on('click', function(e){  // Use class selector for 'add_to_cart' button
+        e.preventDefault();
+
+        var food_id = $(this).attr('data_id');  // Use var keyword, consistent spacing
+        var url = $(this).attr('data-url');
+
+        var data = { food_id: food_id };  // Proper spacing
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: data,
+            success: function(response) { // use parameter name 'response' (lowercase)
+                alert(response.message);   // show response message, not undefined Response
+            },
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);  // optional error handler
+            }
+        });
+    });
+});
