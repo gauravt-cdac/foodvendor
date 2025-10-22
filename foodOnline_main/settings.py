@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'menu',
+
     'accounts',
     'vendor',
+    'menu',
     'marketplace',
 ]
 
@@ -52,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
 
 ROOT_URLCONF = 'foodOnline_main.urls'
@@ -70,8 +70,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_google_api',
-                'marketplace.context_processor.get_cart_counter',
-                'marketplace.context_processor.get_cart_amount',
+                'marketplace.context_processors.get_cart_counter',
+                'marketplace.context_processors.get_cart_amounts',
             ],
         },
     },
@@ -133,10 +133,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = BASE_DIR /'static'
+STATIC_ROOT = BASE_DIR /'static'
 STATICFILES_DIRS = [
-    # 'foodOnline_main/static'
-    BASE_DIR / 'static'
+    'foodOnline_main/static'
 ]
 
 # Media files configuration

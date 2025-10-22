@@ -139,23 +139,24 @@ def add_food(request):
     if request.method == 'POST':
         form = FoodItemForm(request.POST, request.FILES)
         if form.is_valid():
-            food_title = form.cleaned_data['food_title']
+            foodtitle = form.cleaned_data['food_title']
             food = form.save(commit=False)
             food.vendor = get_vendor(request)
-            food.slug = slugify(food_title)
-            food.save()  
+            food.slug = slugify(foodtitle)
+            form.save()
             messages.success(request, 'Food Item added successfully!')
             return redirect('fooditems_by_category', food.category.id)
         else:
             print(form.errors)
     else:
         form = FoodItemForm()
-        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))  
-    
+        # modify this form
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     context = {
         'form': form,
     }
     return render(request, 'vendor/add_food.html', context)
+
 
 
 @login_required(login_url='login')
@@ -177,7 +178,7 @@ def edit_food(request, pk=None):
 
     else:
         form = FoodItemForm(instance=food)
-        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))  
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     context = {
         'form': form,
         'food': food,
