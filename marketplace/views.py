@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from .context_processors import get_cart_counter, get_cart_amounts
 from menu.models import Category, FoodItem
 
@@ -7,6 +7,11 @@ from vendor.models import Vendor
 from django.db.models import Prefetch
 from .models import Cart
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import D # ``D`` is a shortcut for ``Distance``
+from django.contrib.gis.db.models.functions import Distance
 
 
 def marketplace(request):
@@ -116,3 +121,45 @@ def delete_cart(request, cart_id):
                 return JsonResponse({'status': 'Failed', 'message': 'Cart Item does not exist!'})
         else:
             return JsonResponse({'status': 'Failed', 'message': 'Invalid request!'})
+
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
+from django.db.models import Q
+from vendor.models import Vendor
+from menu.models import FoodItem
+
+def search(request):
+    keyword = request.GET.get('keyword', '')
+    address = request.GET.get('address', '')
+    latitude = request.GET.get('lat', '')
+    longitude = request.GET.get('lng', '')
+    radius = request.GET.get('radius', '')
+
+    vendors = Vendor.objects.filter(is_approved=True, user__is_active=True)
+
+    # 🔹 Keyword search — note "fooditem" not "fooditems"
+    if keyword:
+        vendors = vendors.filter(
+            Q(vendor_name__icontains=keyword) |
+            Q(fooditem__food_title__icontains=keyword)
+        ).distinct()
+
+    # 🔹 Location filter (if lat/lng present)
+    if latitude and longitude and radius:
+        try:
+            pnt = GEOSGeometry(f'POINT({longitude} {latitude})', srid=4326)
+            vendors = vendors.filter(
+                user_profile__location__distance_lte=(pnt, D(km=float(radius)))
+            ).annotate(
+                distance=Distance('user_profile__location', pnt)
+            ).order_by('distance')
+        except Exception as e:
+            print("Geo filter error:", e)
+
+    context = {
+        'vendors': vendors,
+        'vendor_count': vendors.count(),
+        'source_location': address,
+    }
+    return render(request, 'marketplace/listings.html', context)
