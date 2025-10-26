@@ -166,3 +166,4 @@ def search(request):
 
 
         return render(request, 'marketplace/listings.html', context)
+    
