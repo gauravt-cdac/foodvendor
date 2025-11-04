@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from decouple import config
 from django import conf
+# from orders.request_object import RequestObjectMiddleware
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'orders.request_object.RequestObjectMiddleware', # custom middleware created to access the request object in models.py
+
 ]
 
 ROOT_URLCONF = 'foodOnline_main.urls'
