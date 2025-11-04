@@ -40,7 +40,7 @@
         <h2 style="text-align: center;">Activate Your Account</h2>
         <p style="text-align: center;">Please verify your email address to activate your account.</p>
         <div style="text-align: center;">
-          <a href="" class="activate-btn" style="color: #fff;">Activate Now</a>
+          <a href="http://{{domain}}{% url 'activate' uidb64=uid token=token %}" class="activate-btn" style="color: #fff;">Activate Now</a>
         </div>
       </td> 
     </tr>
@@ -50,7 +50,7 @@
       <tr>
         <td align="center" style="padding: 15px 15px; color: #fff;">
           <p>© {% now "Y" %} FoodOnline Marketplace, All Rights Reserved.</p>
-          <a href="#" style="color:#fff;">Visit Website</a>      
+          <a href="http://{{domain}}" style="color:#fff;">Visit Website</a>      
         </td>
       </tr>
   </table> 
